@@ -1,0 +1,28 @@
+BootStrap: docker
+From: almalinux:9
+
+%post
+    yum -y groupinstall 'Development Tools'
+    yum -y install python3-devel
+    mkdir /opt/pythia && cd /opt/pythia
+    curl -o pythia8310.tgz https://pythia.org/download/pythia83/pythia8310.tgz
+    tar xvfz pythia8310.tgz
+    cd pythia8310
+    ./configure --with-python-include=/usr/include/python3.9
+    make
+
+%environment
+    export PYTHONPATH=/opt/pythia/pythia8310/lib:$PYTHONPATH
+    export LD_LIBRARY_PATH=/opt/pythia/pythia8310/lib:$LD_LIBRARY_PATH
+
+%runscript
+    cp /opt/pythia/pythia8310/Makefile.inc .
+    python3 /opt/pythia/pythia8310/examples/main01.py
+
+%labels
+    Author HEPTraining
+    Version v0.0.2
+
+%help
+    Container providing Pythia 8.310. Execute the container to run an example.
+    Open it in a shell to use the Pythia installation with Python 3.9

@@ -1,0 +1,1 @@
+TODO: Add github workflow to upload and test the singularities
