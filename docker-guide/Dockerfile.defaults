@@ -1,0 +1,22 @@
+# Dockerfile.defaults
+# Make the base image configurable
+ARG BASE_IMAGE=python:3.9-slim
+FROM ${BASE_IMAGE}
+USER root
+RUN apt-get -qq -y update && \
+    apt-get -qq -y upgrade && \
+    apt-get -y autoclean && \
+    apt-get -y autoremove && \
+    rm -rf /var/lib/apt-get/lists/*
+# Create user "docker"
+RUN useradd -m docker && \
+    cp /root/.bashrc /home/docker/ && \
+    mkdir /home/docker/data && \
+    chown -R --from=root docker /home/docker
+ENV HOME /home/docker
+WORKDIR ${HOME}/data
+USER docker
+
+COPY entrypoint.sh $HOME/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/home/docker/entrypoint.sh"]
+CMD ["there"]
